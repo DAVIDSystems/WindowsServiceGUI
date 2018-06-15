@@ -13,10 +13,6 @@ namespace DigaSystem.ServiceRunner
 {
     public static class ServiceRunner
     {
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr GetStdHandle(int nStdHandle);
-        const int STD_OUTPUT_HANDLE = -11;
-
         public static void LoadServices(this IEnumerable<ServiceBaseEx> services)
         {
             if (Debugger.IsAttached)
