@@ -66,6 +66,7 @@ namespace DigaSystem.ServiceRunner
             AppendMenu(hSysMenu, MF_STRING, SYSMENU_INSTALL_ID, "&Install as Service…");
             AppendMenu(hSysMenu, MF_STRING, SYSMENU_UNINSTALL_ID, "&Uninstall Service…");
 
+
             if (!Utility.IsAdministrator())
             {
                 EnableMenuItem(hSysMenu, SYSMENU_INSTALL_ID, 3);

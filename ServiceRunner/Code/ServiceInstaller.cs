@@ -95,8 +95,15 @@ namespace DigaSystem.ServiceRunner
             Critical = 0x00000003
         }
 
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct SERVICE_DESCRIPTION
+        {
+            public string lpDescription;
+        }
+
         private const int STANDARD_RIGHTS_REQUIRED = 0xF0000;
         private const int SERVICE_WIN32_OWN_PROCESS = 0x00000010;
+        private const int SERVICE_CONFIG_DESCRIPTION = 0x01;
 
         #endregion
 
@@ -126,6 +133,11 @@ namespace DigaSystem.ServiceRunner
         [DllImport("advapi32.dll", EntryPoint = "CreateServiceA")]
         private static extern IntPtr CreateService(IntPtr hSCManager, string lpServiceName, string lpDisplayName, ServiceRights dwDesiredAccess, int dwServiceType, ServiceBootFlag dwStartType, ServiceError dwErrorControl,
                                                     string lpBinaryPathName, string lpLoadOrderGroup, IntPtr lpdwTagId, string lpDependencies, string lp, string lpPassword);
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ChangeServiceConfig2(IntPtr hService, int dwInfoLevel, [MarshalAs(UnmanagedType.Struct)] ref SERVICE_DESCRIPTION lpInfo);
+
         #endregion
 
         #region Public 
@@ -134,7 +146,7 @@ namespace DigaSystem.ServiceRunner
         {
         }
 
-        public static ServiceResult Install(string ServiceName, string DisplayName, string FileName)
+        public static ServiceResult Install(string ServiceName, string DisplayName, string FileName, ServiceBootFlag bootFlag, string Account = null, string Password = null, string Description = null)
         {
             IntPtr scman = IntPtr.Zero;
 
@@ -148,14 +160,21 @@ namespace DigaSystem.ServiceRunner
                 if (service == IntPtr.Zero)
                 {
                     service = CreateService(scman, ServiceName, DisplayName,
-                     ServiceRights.QueryStatus | ServiceRights.Start, SERVICE_WIN32_OWN_PROCESS,
-                     ServiceBootFlag.AutoStart, ServiceError.Normal, FileName, null, IntPtr.Zero,
-                     null, null, null);
+                     ServiceRights.QueryStatus | ServiceRights.Start | ServiceRights.ChangeConfig, SERVICE_WIN32_OWN_PROCESS,
+                     bootFlag, ServiceError.Normal, FileName, null, IntPtr.Zero,
+                     null, Account, Password);
                 }
                 if (service == IntPtr.Zero)
                 {
                     throw new Exception("Failed to install service.");
                 }
+
+                var pinfo = new SERVICE_DESCRIPTION
+                {
+                    lpDescription = Description
+                };
+
+                bool erg = ChangeServiceConfig2(service, SERVICE_CONFIG_DESCRIPTION, ref pinfo);
 
                 return new ServiceResult { Success = true };
             }
@@ -343,7 +362,7 @@ namespace DigaSystem.ServiceRunner
                 return new ServiceResult { Success = false, Error = ex.Message };
             }
         }
-
+             
         #endregion
 
         #region Private

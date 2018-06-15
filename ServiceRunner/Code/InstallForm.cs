@@ -191,7 +191,6 @@ namespace DigaSystem.ServiceRunner
                 return false;
             }
 
-
             return true;
         }
 
@@ -202,6 +201,7 @@ namespace DigaSystem.ServiceRunner
         private void OnSelectCheckbox(object sender, EventArgs e)
         {
             bool isChecked = cbLocalSystem.Checked;
+            SetAccount(isChecked);
         }
 
         private void OnTest(object sender, EventArgs e)
@@ -219,7 +219,7 @@ namespace DigaSystem.ServiceRunner
             if (canInstall)
             {
                 var info = GetInfos();
-                var result = ServiceInstaller.Install(info.ServiceName, info.DisplayName, Utility.GetFilename());
+                var result = ServiceInstaller.Install(info.ServiceName, info.DisplayName, Utility.GetFilename(), info.ServiceType, info.ServiceAccount, info.ServicePassword, info.ServiceDescription);
                 if (!result.Success)
                 {
                     MessageBox.Show(result.Error, "Install Service", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -240,7 +240,6 @@ namespace DigaSystem.ServiceRunner
         }
 
         #endregion
-
 
     }
 }
