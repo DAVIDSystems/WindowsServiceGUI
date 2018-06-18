@@ -7,4 +7,4 @@ tags: service windows c# debug GUI logging installation
 
 Please find the documentation in the projects Wiki !
 
-https://github.com/DAVIDSystems/ServiceRunner/wiki/Service-Runner-Home
+https://github.com/DAVIDSystems/WindowsServiceGUI/wiki/Windows-Service-GUI-Home
