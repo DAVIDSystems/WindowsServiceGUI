@@ -51,7 +51,7 @@ namespace DigaSystem.ServiceRunner
             }
         }
 
-        protected virtual void OnInstall(string[] args)
+        protected virtual void OnQuit(string[] args)
         {
             // Do nothing
         }

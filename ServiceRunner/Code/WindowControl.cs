@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.ServiceProcess;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace DigaSystem.ServiceRunner
 {
@@ -17,6 +18,7 @@ namespace DigaSystem.ServiceRunner
     {
   
         public ServiceBaseEx _theService;
+        private bool _istStarted = false;
 
         public WindowControl()
         {
@@ -66,13 +68,13 @@ namespace DigaSystem.ServiceRunner
             AppendMenu(hSysMenu, MF_STRING, SYSMENU_INSTALL_ID, "&Install as Service…");
             AppendMenu(hSysMenu, MF_STRING, SYSMENU_UNINSTALL_ID, "&Uninstall Service…");
 
-
             if (!Utility.IsAdministrator())
             {
                 EnableMenuItem(hSysMenu, SYSMENU_INSTALL_ID, 3);
                 EnableMenuItem(hSysMenu, SYSMENU_UNINSTALL_ID, 3);
+                AppendMenu(hSysMenu, MF_STRING, SYSMENU_RUNAS_ID, "&Run as Administrator");
             }
-        }
+         }
 
         protected override void WndProc(ref Message m)
         {
@@ -85,7 +87,7 @@ namespace DigaSystem.ServiceRunner
 
                 if (command == SYSMENU_ABOUT_ID)
                 {
-                    MessageBox.Show("DAVID Systems ServiceRunner V 1.0");
+                    MessageBox.Show("DAVIDSystems ServiceRunner V 1.0");
                 }
 
                 if (command == SYSMENU_INSTALL_ID)
@@ -96,6 +98,11 @@ namespace DigaSystem.ServiceRunner
                 if (command == SYSMENU_UNINSTALL_ID)
                 {
                     UninstallService();
+                }
+
+                if (command == SYSMENU_RUNAS_ID)
+                {
+                    RunAsAdmin();
                 }
             }
         }
@@ -112,9 +119,15 @@ namespace DigaSystem.ServiceRunner
                 onStartMethod.Invoke(_theService, new object[] { new string[] { } });
                 bool erg = _theService.HasFailed;
                 if (erg)
+                {
                     DisplayServiceStatus(ServiceState.Failed);
+                    _istStarted = false;
+                }
                 else
+                {
                     DisplayServiceStatus(ServiceState.Started);
+                    _istStarted = true;
+                }
             }
             catch (Exception ex)
             {
@@ -129,6 +142,7 @@ namespace DigaSystem.ServiceRunner
             {
                 onStopMethod.Invoke(_theService, null);
                 DisplayServiceStatus(ServiceState.Stopped);
+                _istStarted = false;
             }
             catch (Exception ex)
             {
@@ -146,6 +160,24 @@ namespace DigaSystem.ServiceRunner
         {
             UninstallServiceDlg uninstallDlg = new UninstallServiceDlg();
             uninstallDlg.ShowDialog();
+        }
+
+        private void RunAsAdmin()
+        {
+            if (!Utility.IsAdministrator())
+            {
+                // Restart program and run as admin
+                var exeName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                ProcessStartInfo startInfo = new ProcessStartInfo(exeName);
+                startInfo.Verb = "runas";
+                System.Diagnostics.Process.Start(startInfo);
+                if (_istStarted)
+                {
+                    StopService();
+                }
+                Application.Exit();
+                return;
+            }
         }
 
         public void SetService(IEnumerable<ServiceBaseEx> services)
@@ -235,6 +267,7 @@ namespace DigaSystem.ServiceRunner
         private int SYSMENU_ABOUT_ID = 0x1;
         private int SYSMENU_INSTALL_ID = 0x2;
         private int SYSMENU_UNINSTALL_ID = 0x3;
+        private int SYSMENU_RUNAS_ID = 0x4;
 
         #endregion
     }
