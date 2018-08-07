@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Michael Wittmann</authors>
+    <owners>DAVID Systems</owners>
+    <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
+    <projectUrl>http://www.digatransproject.net/Bonobo.Git.Server</projectUrl>
+    <iconUrl>http://www.digatransproject.net/service.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>tool to develop windows services</description>
+    <releaseNotes>Open Source Release</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Windows Service without Install</tags>
+  </metadata>
+</package>
