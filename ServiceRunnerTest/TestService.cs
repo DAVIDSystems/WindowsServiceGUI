@@ -13,6 +13,8 @@ namespace ServiceRunnerTest
         protected override void OnStart(string[] args)
         {
             LogMessage("Successfully started Test Service !");
+            LogMessage("Error|Huhu");
+            LogMessage("Successfully started Test Service !");
         }
 
         protected override void OnStop()

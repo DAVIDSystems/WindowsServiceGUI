@@ -229,13 +229,28 @@ namespace DigaSystem.ServiceRunner
         {
             rtbOutput.InvokeIfRequired(() =>
             {
-                int len = rtbOutput.TextLength;
-                if (len > 10000)
+                int len = rtbOutput.Lines.Length;
+                if (len > 6000)
                 {
-                    rtbOutput.Select(0, 5000);
+                    rtbOutput.Select(0, rtbOutput.GetFirstCharIndexFromLine(1000));
                     rtbOutput.SelectedText = "";
                 }
+
+                len = rtbOutput.TextLength;
+
                 rtbOutput.AppendText(message + Environment.NewLine);
+                if (message.ToLower().Contains("error"))
+                {
+                    rtbOutput.Select(len, message.Length);
+                    rtbOutput.SelectionColor = Color.OrangeRed;
+                    rtbOutput.Select();
+                }
+                if (message.ToLower().Contains("warning"))
+                {
+                    rtbOutput.Select(len, message.Length);
+                    rtbOutput.SelectionColor = Color.Orange;
+                    rtbOutput.Select();
+                }
                 rtbOutput.SelectionStart = rtbOutput.Text.Length; //Set the current caret position at the end
                 rtbOutput.ScrollToCaret(); //Now scroll it automatically
             });
