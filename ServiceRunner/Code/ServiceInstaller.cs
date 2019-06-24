@@ -339,7 +339,7 @@ namespace DigaSystem.ServiceRunner
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
 
             return objectOut;

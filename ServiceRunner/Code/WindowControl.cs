@@ -19,6 +19,7 @@ namespace DigaSystem.ServiceRunner
   
         public ServiceBaseEx _theService;
         private bool _istStarted = false;
+        private bool _scrollChecked = true;
 
         public WindowControl()
         {
@@ -59,6 +60,9 @@ namespace DigaSystem.ServiceRunner
 
             // Get a handle to a copy of this form's system (window) menu
             IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
+            // Add a separator
+            AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
+            AppendMenu(hSysMenu, MF_STRING|MF_CHECKED, SYSMENU_AUTOSCROLL_ID, "&AutoScroll");
 
             // Add a separator
             AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
@@ -104,6 +108,12 @@ namespace DigaSystem.ServiceRunner
                 {
                     RunAsAdmin();
                 }
+
+                if (command == SYSMENU_AUTOSCROLL_ID)
+                {
+                    ToogleAutoscroll();
+                }
+
             }
         }
 
@@ -194,6 +204,22 @@ namespace DigaSystem.ServiceRunner
             WriteLine(prefix + e);
         }
 
+        private void ToogleAutoscroll()
+        {
+            IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
+            if (_scrollChecked)
+            {
+                CheckMenuItem(hSysMenu, (uint)SYSMENU_AUTOSCROLL_ID, 0x0);
+            }
+            else
+            {
+                CheckMenuItem(hSysMenu, (uint)SYSMENU_AUTOSCROLL_ID, 0x8);
+            }
+
+            _scrollChecked = !_scrollChecked;
+
+        }
+
         #endregion
 
         #region Gui-Display
@@ -251,8 +277,11 @@ namespace DigaSystem.ServiceRunner
                     rtbOutput.SelectionColor = Color.Orange;
                     rtbOutput.Select();
                 }
-                rtbOutput.SelectionStart = rtbOutput.Text.Length; //Set the current caret position at the end
-                rtbOutput.ScrollToCaret(); //Now scroll it automatically
+                if (_scrollChecked)
+                {
+                    rtbOutput.SelectionStart = rtbOutput.Text.Length; //Set the current caret position at the end
+                    rtbOutput.ScrollToCaret(); //Now scroll it automatically
+                }
             });
 
         }
@@ -264,6 +293,8 @@ namespace DigaSystem.ServiceRunner
         private const int WM_SYSCOMMAND = 0x112;
         private const int MF_STRING = 0x0;
         private const int MF_SEPARATOR = 0x800;
+        private const int MF_CHECKED = 0x8;
+
 
         // P/Invoke declarations
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -278,12 +309,50 @@ namespace DigaSystem.ServiceRunner
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern bool EnableMenuItem(IntPtr hMenu, int uIDEnableItem, uint uEnable);
 
+        [DllImport("user32.dll")]
+        static extern bool SetMenuItemInfo(IntPtr hMenu, uint uItem, bool fByPosition,
+           [In] ref MENUITEMINFO lpmii);
+
+        [DllImport("user32.dll")]
+        static extern uint GetMenuItemID(IntPtr hMenu, int nPos);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern bool GetMenuItemInfo(IntPtr hMenu, int uItem, bool fByPosition, MENUITEMINFO lpmii);
+
+        [DllImport("user32.dll")]
+        public static extern uint CheckMenuItem(IntPtr hmenu, uint uIDCheckItem, uint uCheck);
+
+        public const UInt32 MF_BYCOMMAND = 0x00000000;
+        public const UInt32 MF_BYPOSITION = 0x00000400;
+
         // ID for the About item on the system menu
         private int SYSMENU_ABOUT_ID = 0x1;
         private int SYSMENU_INSTALL_ID = 0x2;
         private int SYSMENU_UNINSTALL_ID = 0x3;
         private int SYSMENU_RUNAS_ID = 0x4;
+        private int SYSMENU_AUTOSCROLL_ID = 0x5;
 
+        [StructLayout(LayoutKind.Sequential)]
+        public class MENUITEMINFO
+        {
+            public int cbSize;
+            public uint fMask;
+            public uint fType;
+            public uint fState;
+            public uint wID;
+            public IntPtr hSubMenu;
+            public IntPtr hbmpChecked;
+            public IntPtr hbmpUnchecked;
+            public IntPtr dwItemData;
+            public IntPtr dwTypeData;
+            public uint cch;
+            public IntPtr hbmpItem;
+
+            public MENUITEMINFO()
+            {
+                cbSize = Marshal.SizeOf(typeof(MENUITEMINFO));
+            }
+        }
         #endregion
     }
 
