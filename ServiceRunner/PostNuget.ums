@@ -1,0 +1,15 @@
+$SOURCE = $SELF\bin\Release
+$EXE = DigaSystem.ServiceRunner.dll
+$VERSION = VERSION($SOURCE\$EXE)
+$COMMAND =  pack ServiceRunner.csproj -Prop Configuration=Release
+$PACK = DigaSystem.ServiceRunner.$VERSION.nupkg
+$PUBLISH = push $PACK eMlv7Bq!_Mi -Source http://www.digatransproject.net/NuGet/api/v2/package
+
+// Set Working Directory
+WORKINGDIR D($SELF)
+
+// Executes an External command
+EXECUTE S(nuget) D($COMMAND)
+
+// Executes an External command
+EXECUTE S(nuget) D($PUBLISH)

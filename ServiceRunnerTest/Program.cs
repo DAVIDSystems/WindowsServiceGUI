@@ -20,7 +20,7 @@ namespace ServiceRunnerTest
             }
             else
             {
-                ServicesToRun.StartServices();
+                ServicesToRun.StartServices(true);
             }
         }
     }

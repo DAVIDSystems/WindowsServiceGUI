@@ -20,6 +20,7 @@ namespace DigaSystem.ServiceRunner
         public ServiceBaseEx _theService;
         private bool _istStarted = false;
         private bool _scrollChecked = true;
+        private bool _autoStart = false;
 
         public WindowControl()
         {
@@ -37,6 +38,18 @@ namespace DigaSystem.ServiceRunner
             set
             {
                 this.Text = value;
+            }
+        }
+
+        public bool AutoStart
+        {
+            get
+            {
+                return _autoStart;
+            }
+            set
+            {
+                _autoStart = value;
             }
         }
 
@@ -218,6 +231,14 @@ namespace DigaSystem.ServiceRunner
 
             _scrollChecked = !_scrollChecked;
 
+        }
+
+        private void OnInitDialog(object sender, EventArgs e)
+        {
+            if (_autoStart == true)
+            {
+                StartService();
+            }
         }
 
         #endregion

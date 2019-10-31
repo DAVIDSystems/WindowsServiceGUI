@@ -1,1 +1,0 @@
-nuget.exe pack "G:\Daten\Projects\Git\OpenSource\ServiceTool\ServiceRunner\ServiceRunner.csproj" -Prop Configuration=Release

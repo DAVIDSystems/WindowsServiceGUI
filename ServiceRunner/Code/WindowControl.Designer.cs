@@ -107,6 +107,7 @@
             this.Name = "WindowControl";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "WindowControl";
+            this.Load += new System.EventHandler(this.OnInitDialog);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
