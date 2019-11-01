@@ -15,21 +15,7 @@ namespace DigaSystem.ServiceRunner
     {
         public static void LoadServices(this IEnumerable<ServiceBaseEx> services)
         {
-            if (Debugger.IsAttached)
-            {
-                var t = Task.Factory.StartNew(() =>
-                {
-                    WindowControl app = new WindowControl();
-                    app.Title = "Service Runner";
-                    app.SetService(services);
-                    app.ShowDialog();
-                }, CancellationToken.None, TaskCreationOptions.PreferFairness, new StaTaskScheduler(25));
-                t.Wait();
-            }
-            else
-            {
-                ServiceBase.Run(services.ToArray());
-            }
+            ServiceBase.Run(services.ToArray());
         }
 
         public static void StartServices(this IEnumerable<ServiceBaseEx> services, bool autostart = false)

@@ -28,19 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WindowControl));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lbStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
-            this.rtbOutput = new System.Windows.Forms.RichTextBox();
+            this.rtbOutput = new System.Windows.Forms.RTFScrolledBottom();
+            this.tsScrollButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsAutoScroll = new System.Windows.Forms.ToolStripMenuItem();
+            this.tmScrollCheck = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lbStatus});
+            this.lbStatus,
+            this.tsScrollButton});
             this.statusStrip1.Location = new System.Drawing.Point(0, 399);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1475, 22);
@@ -94,6 +99,32 @@
             this.rtbOutput.TabIndex = 5;
             this.rtbOutput.Text = "";
             // 
+            // toolStripDropDownButton1
+            // 
+            this.tsScrollButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsScrollButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsAutoScroll});
+            this.tsScrollButton.Image = global::DigaSystem.ServiceRunner.Properties.Resources.scroller;
+            this.tsScrollButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsScrollButton.Name = "toolStripDropDownButton1";
+            this.tsScrollButton.Size = new System.Drawing.Size(29, 20);
+            this.tsScrollButton.Text = "toolStripDropDownButton1";
+            // 
+            // tsAutoScroll
+            // 
+            this.tsAutoScroll.Checked = true;
+            this.tsAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsAutoScroll.Name = "tsAutoScroll";
+            this.tsAutoScroll.Size = new System.Drawing.Size(180, 22);
+            this.tsAutoScroll.Text = "AutoScroll";
+            this.tsAutoScroll.Click += new System.EventHandler(this.OnClickAutoScroll);
+            // 
+            // tmScrollCheck
+            // 
+            this.tmScrollCheck.Enabled = true;
+            this.tmScrollCheck.Interval = 1000;
+            this.tmScrollCheck.Tick += new System.EventHandler(this.CheckScroll);
+            // 
             // WindowControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -121,6 +152,9 @@
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lbStatus;
-        private System.Windows.Forms.RichTextBox rtbOutput;
+        private System.Windows.Forms.RTFScrolledBottom rtbOutput;
+        private System.Windows.Forms.ToolStripDropDownButton tsScrollButton;
+        private System.Windows.Forms.ToolStripMenuItem tsAutoScroll;
+        private System.Windows.Forms.Timer tmScrollCheck;
     }
 }

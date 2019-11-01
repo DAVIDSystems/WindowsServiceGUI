@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+
 namespace DigaSystem.ServiceRunner
 {
     public partial class WindowControl : Form
@@ -21,6 +22,8 @@ namespace DigaSystem.ServiceRunner
         private bool _istStarted = false;
         private bool _scrollChecked = true;
         private bool _autoStart = false;
+        private Queue<string> _scrollBuffer;
+        private int _noScrollCounter; 
 
         public WindowControl()
         {
@@ -130,6 +133,11 @@ namespace DigaSystem.ServiceRunner
             }
         }
 
+        private void OnClickAutoScroll(object sender, EventArgs e)
+        {
+            ToogleAutoscroll();
+        }
+
         #endregion
 
         #region Misc
@@ -230,14 +238,71 @@ namespace DigaSystem.ServiceRunner
             }
 
             _scrollChecked = !_scrollChecked;
+            tsAutoScroll.Checked = _scrollChecked;
+            if (_scrollChecked)
+            {
+                this.tsScrollButton.Image = global::DigaSystem.ServiceRunner.Properties.Resources.scroller;
+            }
+            else
+            {
+                this.tsScrollButton.Image = global::DigaSystem.ServiceRunner.Properties.Resources.scroller_red;
+            }
 
         }
 
         private void OnInitDialog(object sender, EventArgs e)
         {
+            _scrollBuffer = new Queue<string>();
+
             if (_autoStart == true)
             {
                 StartService();
+            }
+            _noScrollCounter = 0;
+            rtbOutput.ViewWasScrolled += RtbOutput_ViewWasScrolled;
+            rtbOutput.MouseDown += RtbOutput_MouseUp;
+        }
+
+        private void RtbOutput_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {   //click event
+                //MessageBox.Show("you got it!");
+                ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
+                MenuItem menuItem = new MenuItem("Copy");
+                menuItem.Click += new EventHandler(CopyAction);
+                contextMenu.MenuItems.Add(menuItem);
+
+                rtbOutput.ContextMenu = contextMenu;
+            }
+        }
+
+        void CopyAction(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(rtbOutput.SelectedText))
+            {
+                Clipboard.SetText(rtbOutput.SelectedText);
+            }
+        }
+
+        private void RtbOutput_ViewWasScrolled(object sender, EventArgs e)
+        {
+            if (_scrollChecked)
+            {
+                _noScrollCounter = 0;
+                ToogleAutoscroll();
+            }
+        }
+
+        private void CheckScroll(object sender, EventArgs e)
+        {
+            if (!_scrollChecked)
+            {
+                _noScrollCounter++;
+                if (_noScrollCounter > 35)
+                {
+                    ToogleAutoscroll();
+                }
             }
         }
 
@@ -274,37 +339,59 @@ namespace DigaSystem.ServiceRunner
 
         private void WriteLine(string message)
         {
+
+            if (_scrollChecked == false)
+            {
+                _scrollBuffer.Enqueue(message);
+                return;
+            }
+
             rtbOutput.InvokeIfRequired(() =>
             {
-                int len = rtbOutput.Lines.Length;
-                if (len > 6000)
+                if (_scrollBuffer.Count > 0)
+                {
+                    do
+                    {
+                        RenderMessage(_scrollBuffer.Dequeue(), rtbOutput.TextLength);
+
+                        if (rtbOutput.Lines.Length > 6000)
+                        {
+                            rtbOutput.Select(0, rtbOutput.GetFirstCharIndexFromLine(1000));
+                            rtbOutput.SelectedText = "";
+                        }
+
+                    } while (_scrollBuffer.Count > 0);
+                }
+
+                if (rtbOutput.Lines.Length > 6000)
                 {
                     rtbOutput.Select(0, rtbOutput.GetFirstCharIndexFromLine(1000));
                     rtbOutput.SelectedText = "";
                 }
 
-                len = rtbOutput.TextLength;
+                RenderMessage(message, rtbOutput.TextLength);
 
-                rtbOutput.AppendText(message + Environment.NewLine);
-                if (message.ToLower().Contains("error"))
-                {
-                    rtbOutput.Select(len, message.Length);
-                    rtbOutput.SelectionColor = Color.OrangeRed;
-                    rtbOutput.Select();
-                }
-                if (message.ToLower().Contains("warning"))
-                {
-                    rtbOutput.Select(len, message.Length);
-                    rtbOutput.SelectionColor = Color.Orange;
-                    rtbOutput.Select();
-                }
-                if (_scrollChecked)
-                {
-                    rtbOutput.SelectionStart = rtbOutput.Text.Length; //Set the current caret position at the end
-                    rtbOutput.ScrollToCaret(); //Now scroll it automatically
-                }
+                rtbOutput.SelectionStart = rtbOutput.Text.Length; //Set the current caret position at the end
+                rtbOutput.ScrollToCaret(); //Now scroll it automatically
             });
 
+        }
+
+        private void RenderMessage(string message, int len)
+        {
+            rtbOutput.AppendText(message + Environment.NewLine);
+            if (message.ToLower().Contains("error"))
+            {
+                rtbOutput.Select(len, message.Length);
+                rtbOutput.SelectionColor = Color.OrangeRed;
+                rtbOutput.Select();
+            }
+            if (message.ToLower().Contains("warning"))
+            {
+                rtbOutput.Select(len, message.Length);
+                rtbOutput.SelectionColor = Color.Orange;
+                rtbOutput.Select();
+            }
         }
 
         #endregion
