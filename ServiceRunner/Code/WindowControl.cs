@@ -214,11 +214,11 @@ namespace DigaSystem.ServiceRunner
         public void SetService(IEnumerable<ServiceBaseEx> services)
         {
             _theService = services.First();
-            _theService.sendMessage += _theService_sendMessage;
+            _theService.sendMessage += OnLogMessage;
             DisplayServiceStatus(ServiceState.Stopped);
         }
 
-        void _theService_sendMessage(object sender, string e)
+        void OnLogMessage(object sender, string e)
         {
             DateTime dtNow = DateTime.Now;
             string prefix = dtNow.ToString("dd.MM.yyyy HH:mm:ss.fff ");
@@ -261,6 +261,15 @@ namespace DigaSystem.ServiceRunner
             _noScrollCounter = 0;
             rtbOutput.ViewWasScrolled += RtbOutput_ViewWasScrolled;
             rtbOutput.MouseDown += RtbOutput_MouseUp;
+            rtbOutput._scrollEvent += RtbOutput__scrollEvent;
+        }
+
+        private void RtbOutput__scrollEvent(int pos, int max)
+        {
+            if (pos > max)
+            {
+                ToogleAutoscroll();
+            }
         }
 
         private void RtbOutput_MouseUp(object sender, MouseEventArgs e)
