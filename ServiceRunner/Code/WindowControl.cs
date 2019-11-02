@@ -78,7 +78,7 @@ namespace DigaSystem.ServiceRunner
             IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
             // Add a separator
             AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
-            AppendMenu(hSysMenu, MF_STRING|MF_CHECKED, SYSMENU_AUTOSCROLL_ID, "&AutoScroll");
+            AppendMenu(hSysMenu, MF_STRING|MF_CHECKED, SYSMENU_AUTOSCROLL_ID, "&Allow Scrolling");
 
             // Add a separator
             AppendMenu(hSysMenu, MF_SEPARATOR, 0, string.Empty);
@@ -311,6 +311,7 @@ namespace DigaSystem.ServiceRunner
                 if (_noScrollCounter > 35)
                 {
                     ToogleAutoscroll();
+                    WriteLine("");
                 }
             }
         }
@@ -370,6 +371,11 @@ namespace DigaSystem.ServiceRunner
                         }
 
                     } while (_scrollBuffer.Count > 0);
+                }
+
+                if (string.IsNullOrEmpty(message))
+                {
+                    return;
                 }
 
                 if (rtbOutput.Lines.Length > 6000)
