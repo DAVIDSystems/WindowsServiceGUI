@@ -23,7 +23,9 @@ namespace DigaSystem.ServiceRunner
         private bool _scrollChecked = true;
         private bool _autoStart = false;
         private Queue<string> _scrollBuffer;
-        private int _noScrollCounter; 
+        private int _noScrollCounter;
+        private string _errorToken = "error";
+        private string _warningToken = "warning";
 
         public WindowControl()
         {
@@ -214,15 +216,21 @@ namespace DigaSystem.ServiceRunner
         public void SetService(IEnumerable<ServiceBaseEx> services)
         {
             _theService = services.First();
-            _theService.sendMessage += OnLogMessage;
+            _theService._logEvent += _theService__logEvent;
+            _theService._setEvent += _theService__setEvent;
             DisplayServiceStatus(ServiceState.Stopped);
         }
 
-        void OnLogMessage(object sender, string e)
+        private void _theService__setEvent(string error, string warning)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void _theService__logEvent(string message)
         {
             DateTime dtNow = DateTime.Now;
             string prefix = dtNow.ToString("dd.MM.yyyy HH:mm:ss.fff ");
-            WriteLine(prefix + e);
+            WriteLine(prefix + message);
         }
 
         private void ToogleAutoscroll()
@@ -395,13 +403,13 @@ namespace DigaSystem.ServiceRunner
         private void RenderMessage(string message, int len)
         {
             rtbOutput.AppendText(message + Environment.NewLine);
-            if (message.ToLower().Contains("error"))
+            if (message.ToLower().Contains(_errorToken))
             {
                 rtbOutput.Select(len, message.Length);
                 rtbOutput.SelectionColor = Color.OrangeRed;
                 rtbOutput.Select();
             }
-            if (message.ToLower().Contains("warning"))
+            if (message.ToLower().Contains(_warningToken))
             {
                 rtbOutput.Select(len, message.Length);
                 rtbOutput.SelectionColor = Color.Orange;

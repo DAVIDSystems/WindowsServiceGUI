@@ -12,8 +12,12 @@ namespace DigaSystem.ServiceRunner
         private bool _status = false;
         private static ServiceBaseEx _instance;
 
-        public event EventHandler<string> sendMessage;
+        public delegate void SendLogMessage(string message);
+        public event SendLogMessage _logEvent;
 
+        public delegate void SetErrorWarning(string error, string warning);
+        public event SetErrorWarning _setEvent;
+        
         public ServiceBaseEx()
         {
             _instance = this;
@@ -31,24 +35,24 @@ namespace DigaSystem.ServiceRunner
             }
         }
 
-        protected virtual void OnSendMessage(string e)
+        protected virtual void OnSendMessage(string message)
         {
-            // Make a temporary copy of the event to avoid possibility of
-            // a race condition if the last subscriber unsubscribes
-            // immediately after the null check and before the event is raised.
-            EventHandler<string> handler = sendMessage;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
+            _logEvent?.Invoke(message);
+        }
+
+        protected virtual void OnSetMessage(string error, string warning)
+        {
+            _setEvent?.Invoke(error, warning);
         }
 
         public static void LogMessage(string msg)
         {
-            if (_instance != null)
-            {
-                _instance.OnSendMessage(msg);
-            }
+            _instance?.OnSendMessage(msg);
+        }
+
+        public static void SetErrorWarningString(string error, string warning)
+        {
+            _instance?.OnSetMessage(error, warning);
         }
 
         protected virtual void OnQuit(string[] args)
