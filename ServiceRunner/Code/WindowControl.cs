@@ -223,7 +223,8 @@ namespace DigaSystem.ServiceRunner
 
         private void _theService__setEvent(string error, string warning)
         {
-            throw new NotImplementedException();
+            _errorToken = error;
+            _warningToken = warning;
         }
 
         private void _theService__logEvent(string message)
@@ -403,13 +404,13 @@ namespace DigaSystem.ServiceRunner
         private void RenderMessage(string message, int len)
         {
             rtbOutput.AppendText(message + Environment.NewLine);
-            if (message.ToLower().Contains(_errorToken))
+            if (message.Contains(_errorToken))
             {
                 rtbOutput.Select(len, message.Length);
                 rtbOutput.SelectionColor = Color.OrangeRed;
                 rtbOutput.Select();
             }
-            if (message.ToLower().Contains(_warningToken))
+            if (message.Contains(_warningToken))
             {
                 rtbOutput.Select(len, message.Length);
                 rtbOutput.SelectionColor = Color.Orange;
