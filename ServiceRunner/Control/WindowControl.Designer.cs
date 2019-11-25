@@ -74,7 +74,7 @@
             this.tsAutoScroll.Checked = true;
             this.tsAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
             this.tsAutoScroll.Name = "tsAutoScroll";
-            this.tsAutoScroll.Size = new System.Drawing.Size(180, 22);
+            this.tsAutoScroll.Size = new System.Drawing.Size(153, 22);
             this.tsAutoScroll.Text = "Allow Scrolling";
             this.tsAutoScroll.Click += new System.EventHandler(this.OnClickAutoScroll);
             // 
@@ -139,6 +139,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "WindowControl";
             this.Load += new System.EventHandler(this.OnInitDialog);
+            this.Shown += new System.EventHandler(this.OnDialogShown);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);

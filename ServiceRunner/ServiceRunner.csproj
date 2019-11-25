@@ -86,10 +86,10 @@
       <DependentUpon>UnInstallForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Code\Utility.cs" />
-    <Compile Include="Code\WindowControl.cs">
+    <Compile Include="Control\WindowControl.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Code\WindowControl.Designer.cs">
+    <Compile Include="Control\WindowControl.Designer.cs">
       <DependentUpon>WindowControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Control\RtfScrollEditor.cs">
@@ -113,7 +113,7 @@
     <EmbeddedResource Include="Code\UnInstallForm.resx">
       <DependentUpon>UnInstallForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Code\WindowControl.resx">
+    <EmbeddedResource Include="Control\WindowControl.resx">
       <DependentUpon>WindowControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -141,7 +141,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_ConfigurationName="Release" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YearMonthStamp.Increment" BuildVersion_StartDate="2017/4/22" />
+      <UserProperties BuildVersion_StartDate="2017/4/22" BuildVersion_BuildVersioningStyle="None.None.YearMonthStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_ConfigurationName="Release" BuildVersion_DetectChanges="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

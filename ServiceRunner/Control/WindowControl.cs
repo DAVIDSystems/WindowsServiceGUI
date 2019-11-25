@@ -140,6 +140,90 @@ namespace DigaSystem.ServiceRunner
             ToogleAutoscroll();
         }
 
+        private void OnDialogShown(object sender, EventArgs e)
+        {
+            Application.DoEvents();
+
+            if (_autoStart == true)
+            {
+                StartService();
+            }
+        }
+        private void _theService__setEvent(string error, string warning)
+        {
+            _errorToken = error;
+            _warningToken = warning;
+        }
+
+        private void _theService__logEvent(string message)
+        {
+            DateTime dtNow = DateTime.Now;
+            string prefix = dtNow.ToString("dd.MM.yyyy HH:mm:ss.fff ");
+            WriteLine(prefix + message);
+        }
+
+        private void OnInitDialog(object sender, EventArgs e)
+        {
+            _scrollBuffer = new Queue<string>();
+
+            _noScrollCounter = 0;
+            rtbOutput.ViewWasScrolled += RtbOutput_ViewWasScrolled;
+            rtbOutput.MouseDown += RtbOutput_MouseUp;
+            rtbOutput._scrollEvent += RtbOutput__scrollEvent;
+        }
+
+        private void RtbOutput__scrollEvent(int pos, int max)
+        {
+            if (pos > max)
+            {
+                ToogleAutoscroll();
+            }
+        }
+
+        private void RtbOutput_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {   //click event
+                //MessageBox.Show("you got it!");
+                ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
+                MenuItem menuItem = new MenuItem("Copy");
+                menuItem.Click += new EventHandler(CopyAction);
+                contextMenu.MenuItems.Add(menuItem);
+
+                rtbOutput.ContextMenu = contextMenu;
+            }
+        }
+
+        private void RtbOutput_ViewWasScrolled(object sender, EventArgs e)
+        {
+            if (_scrollChecked)
+            {
+                _noScrollCounter = 0;
+                ToogleAutoscroll();
+            }
+        }
+
+        private void CheckScroll(object sender, EventArgs e)
+        {
+            if (!_scrollChecked)
+            {
+                _noScrollCounter++;
+                if (_noScrollCounter > 35)
+                {
+                    ToogleAutoscroll();
+                    WriteLine("");
+                }
+            }
+        }
+
+        void CopyAction(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(rtbOutput.SelectedText))
+            {
+                Clipboard.SetText(rtbOutput.SelectedText);
+            }
+        }
+        
         #endregion
 
         #region Misc
@@ -221,18 +305,9 @@ namespace DigaSystem.ServiceRunner
             DisplayServiceStatus(ServiceState.Stopped);
         }
 
-        private void _theService__setEvent(string error, string warning)
-        {
-            _errorToken = error;
-            _warningToken = warning;
-        }
+        #endregion
 
-        private void _theService__logEvent(string message)
-        {
-            DateTime dtNow = DateTime.Now;
-            string prefix = dtNow.ToString("dd.MM.yyyy HH:mm:ss.fff ");
-            WriteLine(prefix + message);
-        }
+        #region Gui-Display
 
         private void ToogleAutoscroll()
         {
@@ -258,76 +333,6 @@ namespace DigaSystem.ServiceRunner
             }
 
         }
-
-        private void OnInitDialog(object sender, EventArgs e)
-        {
-            _scrollBuffer = new Queue<string>();
-
-            if (_autoStart == true)
-            {
-                StartService();
-            }
-            _noScrollCounter = 0;
-            rtbOutput.ViewWasScrolled += RtbOutput_ViewWasScrolled;
-            rtbOutput.MouseDown += RtbOutput_MouseUp;
-            rtbOutput._scrollEvent += RtbOutput__scrollEvent;
-        }
-
-        private void RtbOutput__scrollEvent(int pos, int max)
-        {
-            if (pos > max)
-            {
-                ToogleAutoscroll();
-            }
-        }
-
-        private void RtbOutput_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {   //click event
-                //MessageBox.Show("you got it!");
-                ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
-                MenuItem menuItem = new MenuItem("Copy");
-                menuItem.Click += new EventHandler(CopyAction);
-                contextMenu.MenuItems.Add(menuItem);
-
-                rtbOutput.ContextMenu = contextMenu;
-            }
-        }
-
-        void CopyAction(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(rtbOutput.SelectedText))
-            {
-                Clipboard.SetText(rtbOutput.SelectedText);
-            }
-        }
-
-        private void RtbOutput_ViewWasScrolled(object sender, EventArgs e)
-        {
-            if (_scrollChecked)
-            {
-                _noScrollCounter = 0;
-                ToogleAutoscroll();
-            }
-        }
-
-        private void CheckScroll(object sender, EventArgs e)
-        {
-            if (!_scrollChecked)
-            {
-                _noScrollCounter++;
-                if (_noScrollCounter > 35)
-                {
-                    ToogleAutoscroll();
-                    WriteLine("");
-                }
-            }
-        }
-
-        #endregion
-
-        #region Gui-Display
 
         private void DisplayServiceStatus(ServiceState state)
         {
@@ -485,7 +490,10 @@ namespace DigaSystem.ServiceRunner
                 cbSize = Marshal.SizeOf(typeof(MENUITEMINFO));
             }
         }
+
         #endregion
+
+
     }
 
     public static class AutoInvoke

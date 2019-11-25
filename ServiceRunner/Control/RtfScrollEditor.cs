@@ -16,6 +16,10 @@ namespace System.Windows.Forms
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetScrollInfo(IntPtr hwnd, int fnBar, ref SCROLLINFO lpsi);
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private extern static int GetWindowLong(IntPtr hWnd, int index);
+
+
         [Serializable, StructLayout(LayoutKind.Sequential)]
         struct SCROLLINFO
         {
@@ -72,7 +76,7 @@ namespace System.Windows.Forms
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == WM_VSCROLL || m.Msg == WM_MOUSEWHEEL)
+            if (m.Msg == WM_VSCROLL)
             {
                 ushort command = (ushort) (m.WParam.ToInt32() & 0xFFFF);
                 if (command == 8)
@@ -91,7 +95,19 @@ namespace System.Windows.Forms
                 }
             }
 
+            if (m.Msg == WM_MOUSEWHEEL && VerticalScrollBarVisible(this))
+            {
+                OnScrolledView(EventArgs.Empty);
+            }
+
             base.WndProc(ref m);
+        }
+
+
+        public static bool VerticalScrollBarVisible(Control ctl)
+        {
+            int style = GetWindowLong(ctl.Handle, -16);
+            return (style & 0x200000) != 0;
         }
 
     }
