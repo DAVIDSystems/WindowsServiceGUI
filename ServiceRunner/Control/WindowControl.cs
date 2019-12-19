@@ -149,6 +149,7 @@ namespace DigaSystem.ServiceRunner
                 StartService();
             }
         }
+
         private void _theService__setEvent(string error, string warning)
         {
             _errorToken = error;
@@ -336,29 +337,33 @@ namespace DigaSystem.ServiceRunner
 
         private void DisplayServiceStatus(ServiceState state)
         {
-            string sname = _theService.ServiceName;
-
-            lbStatus.Text = string.Format("Service: '{0}' {1}...", sname, state.ToString());
-
-            switch (state)
+            rtbOutput.InvokeIfRequired(() =>
             {
-                case ServiceState.Failed:
-                case ServiceState.Stopped:
-                case ServiceState.Paused:
-                    btnStart.Enabled = true;
-                    btnStop.Enabled = false;
-                    break;
-                case ServiceState.Started:
-                    btnStart.Enabled = false;
-                    btnStop.Enabled = true;
-                    break;
-                case ServiceState.Pausing:
-                case ServiceState.Starting:
-                case ServiceState.Stopping:
-                    btnStart.Enabled = false;
-                    btnStop.Enabled = false;
-                    break;                
-            }
+
+                string sname = _theService.ServiceName;
+
+                lbStatus.Text = string.Format("Service: '{0}' {1}...", sname, state.ToString());
+
+                switch (state)
+                {
+                    case ServiceState.Failed:
+                    case ServiceState.Stopped:
+                    case ServiceState.Paused:
+                        btnStart.Enabled = true;
+                        btnStop.Enabled = false;
+                        break;
+                    case ServiceState.Started:
+                        btnStart.Enabled = false;
+                        btnStop.Enabled = true;
+                        break;
+                    case ServiceState.Pausing:
+                    case ServiceState.Starting:
+                    case ServiceState.Stopping:
+                        btnStart.Enabled = false;
+                        btnStop.Enabled = false;
+                        break;
+                }
+            });
         }
 
         private void WriteLine(string message)
