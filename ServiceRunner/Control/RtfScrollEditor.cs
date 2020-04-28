@@ -97,7 +97,11 @@ namespace System.Windows.Forms
 
             if (m.Msg == WM_MOUSEWHEEL && VerticalScrollBarVisible(this))
             {
-                OnScrolledView(EventArgs.Empty);
+                ushort command = (ushort)(m.WParam.ToInt32() & 0x4);
+                if (command != 0)
+                {
+                    OnScrolledView(EventArgs.Empty);
+                }
             }
 
             base.WndProc(ref m);
