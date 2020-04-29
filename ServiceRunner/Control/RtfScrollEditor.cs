@@ -67,13 +67,6 @@ namespace System.Windows.Forms
                 ViewWasScrolled(this, e);
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            OnScrolledView(EventArgs.Empty);
-
-            base.OnKeyUp(e);
-        }
-
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == WM_VSCROLL)
@@ -95,14 +88,14 @@ namespace System.Windows.Forms
                 }
             }
 
-            if (m.Msg == WM_MOUSEWHEEL && VerticalScrollBarVisible(this))
-            {
-                ushort command = (ushort)(m.WParam.ToInt32() & 0x4);
-                if (command != 0)
-                {
-                    OnScrolledView(EventArgs.Empty);
-                }
-            }
+            //if (m.Msg == WM_MOUSEWHEEL && VerticalScrollBarVisible(this))
+            //{
+            //    ushort command = (ushort)(m.WParam.ToInt32() & 0x4);
+            //    if (command != 0)
+            //    {
+            //        OnScrolledView(EventArgs.Empty);
+            //    }
+            //}
 
             base.WndProc(ref m);
         }

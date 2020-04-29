@@ -224,7 +224,31 @@ namespace DigaSystem.ServiceRunner
                 Clipboard.SetText(rtbOutput.SelectedText);
             }
         }
-        
+
+        private void OnMouseDownEvent(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                // Start Scrolling
+                if (!_scrollChecked)
+                {
+                    _scrollChecked = true;
+                    SetScrollMode(_scrollChecked);
+                    return;
+                }
+            }
+            
+            if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.None) == Keys.None)
+            {
+                // Stop Scrolling
+                if (_scrollChecked)
+                {
+                    _scrollChecked = false;
+                    SetScrollMode(_scrollChecked);
+                    return;
+                }
+            }
+        }
         #endregion
 
         #region Misc
@@ -312,19 +336,24 @@ namespace DigaSystem.ServiceRunner
 
         private void ToogleAutoscroll()
         {
+            _scrollChecked = !_scrollChecked;
+            SetScrollMode(_scrollChecked);
+        }
+
+        private void SetScrollMode(bool enable)
+        {
             IntPtr hSysMenu = GetSystemMenu(this.Handle, false);
-            if (_scrollChecked)
-            {
-                CheckMenuItem(hSysMenu, (uint)SYSMENU_AUTOSCROLL_ID, 0x0);
-            }
-            else
+            if (enable)
             {
                 CheckMenuItem(hSysMenu, (uint)SYSMENU_AUTOSCROLL_ID, 0x8);
             }
+            else
+            {                
+                CheckMenuItem(hSysMenu, (uint)SYSMENU_AUTOSCROLL_ID, 0x0);
+            }
 
-            _scrollChecked = !_scrollChecked;
-            tsAutoScroll.Checked = _scrollChecked;
-            if (_scrollChecked)
+            tsAutoScroll.Checked = enable;
+            if (enable)
             {
                 this.tsScrollButton.Image = global::DigaSystem.ServiceRunner.Properties.Resources.scroller;
             }
@@ -332,7 +361,6 @@ namespace DigaSystem.ServiceRunner
             {
                 this.tsScrollButton.Image = global::DigaSystem.ServiceRunner.Properties.Resources.scroller_red;
             }
-
         }
 
         private void DisplayServiceStatus(ServiceState state)
@@ -496,9 +524,8 @@ namespace DigaSystem.ServiceRunner
             }
         }
 
+
         #endregion
-
-
     }
 
     public static class AutoInvoke

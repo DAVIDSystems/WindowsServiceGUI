@@ -1,0 +1,1 @@
+﻿29.04.2020: Cleanup ScrollStop - LeftMouseBtn Dwn Stop - Ctrl + LeftMouseBtn Down Start

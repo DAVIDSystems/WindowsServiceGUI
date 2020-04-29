@@ -1,0 +1,14 @@
+$NAME = DigaSystem.ServiceRunner
+$BIN = $SELF\ServiceRunner\bin\Release
+$VERSION = VERSION($BIN\$NAME.dll)
+$COMMIT = commit -a -m="$VERSION - Cleanup ScrollStop"
+
+// Set Working Directory
+WORKINGDIR D($SELF)
+
+EXECUTE S(git) D(add *)
+
+// Executes an External command
+EXECUTE S(git) D($COMMIT)
+
+EXECUTE S(git) D(push origin master)

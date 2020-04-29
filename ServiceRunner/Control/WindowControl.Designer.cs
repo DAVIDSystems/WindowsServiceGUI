@@ -118,6 +118,7 @@
             this.rtbOutput.Size = new System.Drawing.Size(1275, 380);
             this.rtbOutput.TabIndex = 5;
             this.rtbOutput.Text = "";
+            this.rtbOutput.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDownEvent);
             // 
             // tmScrollCheck
             // 

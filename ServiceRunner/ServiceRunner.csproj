@@ -129,6 +129,7 @@
     <None Include="Resources\control_stop_blue.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="changes.txt" />
     <Content Include="Resources\scroller.png" />
     <Content Include="Resources\scroller_red.png" />
     <Content Include="service.png" />
@@ -141,7 +142,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2017/4/22" BuildVersion_BuildVersioningStyle="None.None.YearMonthStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_ConfigurationName="Release" BuildVersion_DetectChanges="False" />
+      <UserProperties BuildVersion_DetectChanges="False" BuildVersion_ConfigurationName="Release" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YearMonthStamp.Increment" BuildVersion_StartDate="2017/4/22" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
